@@ -60,4 +60,4 @@ def __processUserString(s):
     return dumps(d, ensure_ascii=False)
 
 if __name__ == "__main__":
-    print(getUserInfoById("excited-vczh"))
+    print(getUserInfoById("sgfxq"))
