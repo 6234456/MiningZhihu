@@ -49,13 +49,23 @@ def __processUserString(s):
         d['gender'] = [i for i in soup.select_one("span.info-wrap > span.gender > i")['class'] if "profile" in i][0].split("-")[2]
 
     # info about zhihu involvement
-    d['agrees_recieved'] = soup.select_one(".zm-profile-header-user-agree > strong").string
-    d['thanks_recieved'] = soup.select_one(".zm-profile-header-user-thanks > strong").string
+    d['agrees_recieved'] = int(soup.select_one(".zm-profile-header-user-agree > strong").string)
+    d['thanks_recieved'] = int(soup.select_one(".zm-profile-header-user-thanks > strong").string)
+
+    # answers
+
+    answer_agree = [int(i.string) for i in soup.select("#zh-profile-answers-inner-list  .zm-profile-vote-num")]
+    answer_question = [i.string for i in soup.select("#zh-profile-answers-inner-list .zm-profile-question .question_link")]
+    answer_text = [i.string for i in soup.select("#zh-profile-answers-inner-list .zm-profile-item-text")]
+    d['answer'] = list(zip(answer_question, answer_text, answer_agree))
+
 
     # last active
-    d['last_active_time'] = [__parseZhihuTime(i["data-time"]) for i in soup.select(".zm-profile-section-item.zm-item.clearfix")]
-    d['last_active_question'] = [str(i.string) for i in soup.select("a.question_link")]
-    d['last_active_question_url'] = [i['href'] for i in soup.select("a.question_link")]
+    last_active_time = [__parseZhihuTime(i["data-time"]) for i in soup.select("#zh-profile-activity-wrap .zm-profile-section-item.zm-item.clearfix")]
+    last_active_question = [str(i.string) for i in soup.select("#zh-profile-activity-wrap a.question_link")]
+    last_active_question_url = [i['href'] for i in soup.select("#zh-profile-activity-wrap a.question_link")]
+
+    d['activity'] = list(zip(last_active_time, last_active_question, last_active_question_url))
 
     return dumps(d, ensure_ascii=False)
 
